@@ -1,0 +1,505 @@
+---
+title: "With Toronto Centre By-election approaching, polling results suggest NDP needs to appeal more to ethnic minorities, young voters."
+author: "Haili Su, Jiaxiang Miao, Xingyu Yu, Minghui Chen"
+date: '2020-10-07'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+install.packages("tidyverse")
+install.packages("tibble")
+install.packages("ggplot2")
+install.packages("knitr")
+install.packages("gridExtra")
+library(tidyverse)
+library(tibble)
+library(ggplot2)
+library(knitr)
+library(gridExtra)
+
+options(dplyr.summarise.inform = FALSE)
+```
+
+# Executive summary
+
+Petit Poll has been asked by the federal New Democratic Party (NDP) to survey Toronto Centre riding to understand whether people are likely to vote for NDP candidate in the upcoming by-election on October 26th. We surveyed 1,061 eligible voters of this by-election, who is a Canadian over the age of 18 and is living in Toronto Centre riding, and asked their options regarding this by-election and demographic information, including gender, age, ethnicity and highest educational level, in order to analyze how these factors effect personal political preferences. The survey method is simple random sampling without replacement (SWROR), and we reached potential respondents via phone calls and mailed letters due to the COVID-19 pandemic. We then created and stimulated the dataset supporting our later analysis based on the real-world population parameters. The supporting rates for NDP, LPC and CON in our stimulated results are 23.3%, 26.5%, and 21.3% respectively, indicates that the NDP candidate will have a chance to win the by-election this time while the Liberals and the Conservatives would be the strong contenders. The demographic session in our report shows that young adults under the age of 34, white Canadians and individuals without a secondary diploma have a slightly larger chance to support NDP than other demographic groups. However, no major differences for voting patterns among demographic groups are observed overall. Meanwhile, ethnical minorities and young voters under the age of 44, who are non-NDP-leaning voters, show high tendency to switch to NDP (i.e. likelihood to choose NDP instead >7 for Question 3 in our survey). We highlights these findings because these data suggests NDP should appeal more to these voters to maximize NDP's chances for winning. But, our stimulated results are not perfect because non-response problems, response errors and systematic errors, which lead to the lack of reliability and generality, may exist at some levels through our study period. To minimize these bias, we will improve our survey methods in the future studies by trying zoom (during the outbreak)/ in-person interviews, training our interviewers to have all essential skills for interviewing, and increasing incidence rates. Our future studies will be focused on the analysis of NDP-leaning voters' reasons for supporting NDP and how these reasons are influenced by their personal background. These studies will be planned to give NDP better suggestions on how the NDP candidate should appeal for potential voters. 
+
+# Introduction
+
+A by-election for the House of Commons seat representing the Toronto Centre federal electoral district ('riding') is set to be held on Oct 26, 2020, after the former MP of Toronto Centre and Minister of Finance Bill Morneau’s resignation. Since 2008, the New Democratic Party (NDP) candidates have been close runner-up in this riding, which is in the downtown of the largest city of Canada, with the highest population density among all 338 ridings (338Canada, 2020). 
+
+This survey is an opinion poll on Toronto Centre voters’ preferences over which party to vote for. For people who tend to vote for the NDP, we are also asking how determined they are about this choice. For people who tend to vote for another party, are undecided, or do not intend to vote, we will ask how likely they will switch to voting for the NDP candidate. We believe the results of this survey can aid the NDP to better evaluate the party’s chance of winning this by-election and which demographic group they should appeal to more.
+
+For the purpose of data collecting, we will use Simple Random Sampling Without Replacement method and collect at least 1061 responses. A more detailed account of our methodology is provided in the following section. The details of our survey questions and design can be found in the appendix. 
+
+According to the 2016 census data, this riding has 73,675 Canadian citizens over 18, (33,970 women and 39,705 men). 49.7% of the riding population is of visible minority backgrounds while 1.5% are of indigenous backgrounds (not counted in the visible minority) (Statistics Canada, 2017). Based on the census data, we estimated population parameters. With these parameters and with the consideration of the electoral history of this riding and the prediction of 338canada.ca, we simulated 1061 responses to our survey and analyzed the simulated results to show what kind of insights our survey and our team of statisticians could provide to the NDP campaign. The simulation is based on the scenario where the Liberal Party leads in the poll with NDP being a close runner up. With the results, demographic information, and respondents’  indication of their likelihood of switching to/from NDP, we make the suggestion that NDP has a stronger chance of winning this by-election than before, and should appeal more to ethnic minority and younger constituents in this riding. 
+
+We used R language (R Core Team, 2020) for simulation and data analysis, and the report is written in a R Markdown (Allaire et al., 2020) along with packages including tidyverse (Wickham et al., 2019), tibble (Müller & Wickham, 2020), ggplot2 (Wickham, 2016), knitr (Xie, 2020) and gridextra (Auguie, 2017). The Github repo link for code and dataset supporting our analysis is available here: https://github.com/MingHuiChen98/Petit-Poll-NDP.
+
+
+# Survey methodology 
+
+For the purpose of our survey, we identify the target population as all the eligible voters in this by-election, i.e. all the people who are 18 years or older Canadian citizens and reside within the Toronto Centre riding on the day of the election ($\hat{N} = 73,675$, estimated by the number of Canadian citizen over 18 in this riding in 2016 census data (Statistics Canada, 2017)). Our frame will be the voters who have registered as residing in this riding according to Elections Canada voter registry. Our sample population will be the eligible voters randomly sampled from the voter registry who completed our survey (n = 1061). 
+
+For our sampling method, we chose Simple Random Sampling Without Replacement (SRSWOR), which means we randomly sample 1061 individuals on the voter registry, with every voter having the same probability of being selected. This method, while basic, does give a sufficient representation of the population when sample size is large enough, and is easier to design given that by-election date is approaching. Also the list of voters that is our frame is close to include our total population, while our population size is moderate. Our minimum required sample size is calculated based on the proportion of women in this riding. According to 2016 census, about 46.1% of the adult citizen population are female. With margin of error being 3% and a 95% confidence, our minimum n is calculated by $$1. \quad n = \frac{\hat{p}(1 - \hat{p}) * z^2_\alpha / 2}{d^2} = 1060.28 $$, thus we should have at least 1061 respondents. 
+
+Based on the method we chose, for any parameters, the population mean $\mu_y$ will be estimated by the sample mean $\bar{y}$: $$2. \quad E(\bar{y}) = \mu_y$$
+and our variance estimate for $\bar{y}$ will be: $$3. \quad v(\bar{y}) = (1 - \frac{n}{\hat{N}})\frac{s^2_y}{n}$$
+with $s_y$ being our sample standard deviation. (Wu & Thompson, 2020)
+
+Giving the situation of COVID-19 pandemic in Toronto, it would be unsafe to have field workers interviewing voters on the ground. Therefore we will try to match as much sampled voters as possible to a phone number in public records and try to reach them by phone. For the rest of the voters whose numbers are unable to reach or be found, we will send a letter to their address on the registry to invite them to participate in our polls. 
+
+In the situation of a non-response, we will randomly sampled another voter on the registry with the same address if the it is an apartment building, or the same first three digits of the postal code if otherwise. In the event of a person we sampled no longer being eligible due to lags in voter information update (e.g. moved or deceased), it will be treated the same as a non-response. 
+
+To protect the privacy of the respondents, their personal information will only be accessed when needed. For example, when searching for phone numbers, we have two group of staffs: one searching based on the person’s name, and another searching by the address. The callers will only know the person’s name and age and the number will be dialled by the system. In our database they will all be assigned an ID number for tracking.
+
+The estimated total costs for our survey are CAD$42,440, with an average cost of 40 dollars per completed respondent, based on Lee's article and wages in Toronto Centre riding. We will use Microsoft Forms, as a free resource for NDP employees, to design our survey questionnaire. As we will send our survey via both phone and mail, the incidence rates are set to be about 90% (i.e., out of 100 surveys we send, 90 individuals respond and complete the survey). Our plan is to hire six workers and pay them 26 dollars per hour for tracing and interviewing each selected individual. The whole process for one completed submission of our survey is expected to spend one interviewer about 1.15 hours. We will then ask for another 10,000 dollars to pay for the telephone and postage charges, data management and analysis, and the list of mailing address and phone numbers. 
+
+
+```{r, include=FALSE}
+#n stands for sample size, which is fixed and calculated from the equation listed in methodology.
+n <- 1061
+set.seed(4)
+
+#use uniform(0,1) to randomly generate party supporting rates:
+prop_1 <- runif(7)
+#adjust the random numbers to make their sum 1. Numbers sorted to match with the party ranking which is based on the projection of 338canada.com
+party_prop <- sort(c(prop_1/sum(prop_1)), decreasing = TRUE)
+
+#use uniform(0,1) to randomly generate the probabilities of non-NDP voters' responses on how likely they will switch to NDP:
+prop_2 <- runif(10)
+likely_prop <- c(prop_2/ sum(prop_2))
+
+#create the simulated dataset
+my_data <- tibble(
+    # Target population for our survey is all Canadians over the age of 18 who residing in Toronto Centre riding on October 26, 2020. The question one is a screening question and individuals who chose "no" would not answer and submit the survey. 
+    eligible = sample(x = c("yes"), size = n, replace = TRUE),
+    # Sorted to match with the party ranking based on 338canada.com
+    party = sample(x = c("LPC","NDP", "CON", "GRN", "Other/IND", "Not Voting", "Not decided"), size = n, replace = TRUE, prob = party_prop),
+    # All weightings for demographic information are based on 2016 Canada Census.
+    gender = sample(x = c("female", "male", "NB/GNC/Others", "Not to say"), size = n, replace = TRUE, prob = c(0.46, 0.53, 0.005, 0.005)),
+    age = sample(x = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"), size = n, replace = TRUE, prob = c(0.126, 0.278, 0.224, 0.15, 0.117, 0.105)),
+    ethnicity = sample(x = c("First Nations/Metis/Inuit", "White", "E Asian", "Black", "SE Asian", "Latin Americans", "Arab", "W Asian", "S Asian", "Multiple", "NIE"), size = n, replace = TRUE, prob = c(0.015, 0.488, 0.135, 0.091, 0.066, 0.025, 0.018, 0.033, 0.18, 0.019, 0.1)),
+    education = sample(x = c("No Secondary", "Secondary", "Some Postsecondary", "Bachelor", "Some Postgrad", "Master", "PhD"), size = n, replace = TRUE, prob = c(0.088, 0.212, 0.199, 0.309, 0.044, 0.125, 0.025))) %>% mutate(likely = case_when(
+        party == "NDP" ~ sample(x = c(1:10), size = n, replace = TRUE, prob = c(0.05, 0.05, 0.05, 0.1, 0.15, 0.15, 0.15, 0.075, 0.15, 0.075)), 
+        party != "NDP" ~ sample(x = c(1:10), size = n, replace = TRUE, prob = likely_prop) 
+    ))
+glimpse(my_data)
+```
+
+
+# Results
+
+As we mentioned in the introduction, we simulated the following results of a sample of 1061 respondents based on real-world population parameters. The codes of simulation, along with the specific weightings and their sources, can be found in the GitHub repo mentioned in the introduction section. The ethnicity categories are based on the 'Visible Minority' and 'Aboriginal Identity' section in the 2016 census (Statistics Canada, 2017). The results, regarding the voting patterns among demographic information, have been extracted and analyzed. 
+
+```{r, echo=FALSE}
+#summary: voter support in general:
+
+prop.party <- my_data %>% group_by(party) %>% summarise(n = n()) %>% mutate(prop = round((n/(sum(n))*100), digits = 2))
+
+knitr::kable(prop.party, col.names = c("Party", "n", "Support %"), align = "lcc", caption = "Polling results for Toronto Centre By-Election on Oct 26, 2020")
+
+plot.party <- my_data %>% ggplot(aes(x = '', fill = party))+
+    geom_bar()+
+    theme(axis.text = element_text(size = 3))+
+    theme(aspect.ratio = 0.4)+
+    labs(title = "Percentages of support for each party",
+         subtitle = "(n = 1061)",
+         x = "Sample overall",
+         y = "Percentage of voters",
+         caption = "Source: Stimulated my_data")
+```
+
+Firstly, our simulated polling results, seen in table 1, show that the four main federal parties, the Liberals (LPC), NDP, the Conservatives (CON) and the Green (GRN) each has support rate of 26.48%, 23.28%, 21.30% and 10.08% respectively. Comparatively speaking, we can conclude that NDP has its advantage to win the election. However, LPC and CON will be strong contenders to NDP. It's also worth noticing that 8.77% of the voters said they are not going to vote, while 9.90% of the voters said they are voting for a non-major-party candidate, comparing to the extremely small proportion of undecided voter (0.19%).
+
+Does certain demographic group have different voting patterns than the others? Here are the voting patterns by different demographic groups:
+
+## Ethnicities 
+
+```{r, include=FALSE}
+#summary: proportion of party support by ethnicity:
+prop.eth.party <- my_data %>% group_by(ethnicity, party) %>% summarise(n = n()) %>%
+    mutate(prop = c(n/(sum(n))))
+prop.eth.party
+```
+
+```{r, echo=FALSE}
+#summary: ethnical group representation in the sample:
+prop.eth <- my_data %>% group_by(ethnicity) %>% summarise(n = n()) %>%
+    mutate(prop = round((n/(sum(n)) * 100), digits = 2))
+
+kable(prop.eth, col.names = c("Ethnicity", "n", "Proportion %"), align = "lcc", caption = "Ethnical group representations in the sample")
+
+
+```
+
+Table 2 is an overall look at how each ethnic group is represented in our sample. As we can see, five ethnic groups (Black/African, East Asian, South Asian, Southeast Asian, and White/European), and 'NIE', which means not included elsewhere (i.e. in other ethnic groups), are represented with more than 3% in our samples. White voters, the largest voter group by ethnicity, compose 39.96% of our sample, following with South Asian (16.78%) and East Asian (11.59%) voters.
+
+```{r, echo= FALSE}
+#bar chart: voters by ethnicity and party support:
+plot.eth.party <- prop.eth.party %>% ggplot(aes(x = ethnicity, y = prop.eth.party$prop, fill = party))+
+    geom_bar(position="fill", stat="identity")+
+    theme(axis.text = element_text(size = 3))+
+    theme(aspect.ratio = 0.4)+
+    labs(title = "Figure 1: Percentages of support for each party by ethnic groups",
+         subtitle = "Similar patterns among major ethnic groups, with white voters slightly lean to NDP more",
+         y = "Percentage of voters",
+         x = "Ethnic groups",
+         caption = "Source: Stimulated my_data, 
+         'NIE' refers to 2016 Census category 'Visible Minority (not included elsewhere)'")
+
+plot.eth.party
+```
+
+Here we investigated the distribution of party support by ethnic groups. From fig. 1 we can see among the ethnic groups that compose more than 3% in our sample, in this riding, voting patterns are similar. Although we can also see that white voters lean to NDP more (actual support rate 27.1%) with the Liberals, favored by other ethnic groups, tightly following (support rate 22.6%). The East Asian voters, while favoring the Liberals more, have the highest support for the Conservatives (the actual support rate in East Asian voters are: 26% for the Liberals, 25.2% for the Conservatives & 23.6% for NDP, all within 3% margin of error). Groups that comprise less than 3% of our samples separately include voters with Arab, Indigenous, Latin American, West Asian, or multiple ethnic backgrounds who may have shown different voting patterns. However, the sample sizes are insufficient for conclusive analysis. 
+
+## Age groups
+
+```{r, include=FALSE}
+
+#summary: proportion of party support by age groups:
+prop.age.party <- my_data %>% group_by(age, party) %>% summarise(n = n()) %>%
+    mutate(prop = c(n/(sum(n))))
+prop.age.party
+```
+
+```{r, echo=FALSE}
+
+#summary: ethnic group representation in the sample:
+prop.age <- my_data %>% group_by(age) %>% summarise(n = n()) %>%
+    mutate(prop = round((n/(sum(n)) * 100), digits = 2))
+
+kable(prop.age, col.names = c("Age group", "n", "Proportion %"), align = "lcc", caption = "Age group representations in the sample")
+```
+
+Here in table 3 we can see the age group compositions in our sample. Overall this is a young riding with voters between 25-44 composed more than half of our sample, while senior voters (over 65) are 10.08% of the sample.
+
+```{r, echo= FALSE}
+
+#bar chart: voters by age group and party support:
+plot.age.party <- prop.age.party %>% ggplot(aes(x = age, y = prop, fill = party))+
+    geom_bar(position="fill", stat="identity")+
+    theme(axis.text = element_text(size = 3))+
+    theme(aspect.ratio = 0.4)+
+    labs(title = "Figure 2: Percentages of support for each party by age groups",
+         subtitle = "Younger voters are more likely to vote for NDP (n = 1061)",
+         y = "Percentage of voters",
+         x = "Age groups",
+         caption = "Source: Stimulated my_data")
+
+plot.age.party
+```
+
+From the figure 2, which is the distribution of party support by age, it is found that slightly more younger individuals tend to support NDP, especially in the age group of 18-24 (26.1%) and 25-34 (25.2%), while the least NDP support is in 65+, which is 18.7%. In terms of the Liberals and the Conservative, they got a huge proposition of supporters at the age between 25-34 and 35-44 as well. It seems like those two parties are still competitive in this riding. However, the voting patterns among age groups don't diverge greatly.
+
+## Genders
+
+```{r, include=FALSE}
+
+#summary: proportion of party support by genders:
+prop.gnd.party <- my_data %>% group_by(gender, party) %>% summarise(n = n()) %>%
+    mutate(prop = c(n/(sum(n))))
+prop.age.party
+```
+
+```{r, echo=FALSE}
+
+#summary: ethnical group representation in the sample:
+prop.gnd <- my_data %>% group_by(gender) %>% summarise(n = n()) %>%
+    mutate(prop = round((n/(sum(n)) * 100), digits = 2))
+
+kable(prop.gnd, col.names = c("Gender", "n", "Proportion %"), align = "lcc", caption = "Gender representations in the sample")
+
+```
+
+From table 4 we can see female voters compose 44.39% of our data, while male voters comprise 54.57%. Non-binary and Gender nonconforming voters, along with voters of other gender identities, compose 0.66% of our sample. 4 respondents (0.38%) chose not to disclose their gender identities.
+
+```{r, echo= FALSE}
+
+#bar chart: voters by gender and party support:
+plot.gnd.party <- prop.gnd.party %>% filter(gender != "Not to say") %>% ggplot(aes(x = gender, y = prop, fill = party))+
+    geom_bar(position="fill", stat="identity")+
+    theme(axis.text = element_text(size = 3))+
+    theme(aspect.ratio = 0.4)+
+    labs(title = "Figure 3: Percentages of support for each party by genders",
+         subtitle = "(n = 1057)",
+         y = "Percentage of voters",
+         x = "Genders",
+         caption = "Source: Stimulated my_data")
+
+plot.gnd.party
+```
+
+There is no significant distinction in voting patterns between female and male voters (Figure 3), while the sample size of voters of other gender identities is far too small for any conclusive analysis. 
+
+## Education levels
+
+```{r, include=FALSE}
+
+#summary: proportion of party support by genders:
+prop.edu.party <- my_data %>% group_by(education, party) %>% summarise(n = n()) %>%
+    mutate(prop = c(n/(sum(n))))
+prop.edu.party
+```
+
+```{r, echo=FALSE}
+
+#summary: ethnical group representation in the sample:
+prop.edu <- my_data %>% group_by(education) %>% summarise(n = n()) %>%
+    mutate(prop = round((n/(sum(n)) * 100), digits = 2))
+
+kable(prop.edu, col.names = c("Education level", "n", "Proportion %"), align = "lcc", caption = "Education level representations in the sample")
+```
+
+In table 5 we see most of the voters in our sample have received at least some postsecondary education and people with bachelor's degree(s) are the largest voter group (20.69%) by education level. There is also a significant portion of voters who have a high school diploma but no postsecondary education (22.24%).
+
+```{r, echo= FALSE}
+
+#bar chart: voters by edu level and party support:
+plot.edu.party <- prop.edu.party %>% ggplot(aes(x = education, y = prop, fill = party))+
+    geom_bar(position="fill", stat="identity")+
+    theme(axis.text = element_text(size = 3))+
+    theme(aspect.ratio = 0.4)+
+    labs(title = "Figure 4: Percentages of support for each party by education levels",
+         subtitle = "(n = 1061)",
+         y = "Percentage of voters",
+         x = "Education levels",
+         caption = "Source: Stimulated my_data")
+
+plot.edu.party
+```
+
+From figure 4, we compare the education level of different parties’ supporters, people with some college education below bachelor level showed the highest support for LPC (30%), people with no secondary education diploma shows the highest support for NDP (27.1%) and least support for CON (17%), but what is worth noticing is that their support for the LPC is the same as for NDP.
+
+## Determination level of NDP voters  
+
+```{r, echo=FALSE}
+
+#a bar chart for distrbution of level of determination of voting for NDP:
+plot.ndp.det <-my_data %>% filter(party == "NDP") %>% ggplot(aes(x=likely))+
+  geom_bar()+
+  labs(title = "Figure 5: The determination level of NDP-leaning voters",
+       subtitle = "(n = 247)",
+       x = "Determination Levels",
+       y = "Numbers of Individuals",
+       caption = "Source: Stimulated my_data")
+plot.ndp.det
+
+#sample statistics of determination levels:
+#estimated total population (Statistics Canada, 2017):
+N = 73675
+ndp <- my_data %>% filter(party == "NDP") 
+mean_ndp <-  mean(ndp$likely)
+s2_ndp <- sd(ndp$likely)^2
+#estimate the population variance of the determination levels by equation 3, N*party proportion to estimate the total population of NDP-leaning voters:
+est_var_ndp <- (1- ((prop.party$n[4])/ N * (prop.party$prop[4]))* (s2_ndp/(prop.party$n[4])))
+
+level_stat <- tibble(mean = mean_ndp, variance = est_var_ndp)
+kable(level_stat, caption = "Estimate mean and variance of levels of determination in NDP voters")
+
+```
+
+We also survey the determination level of NDP-leaning voters. From fig. 5 we can see most of these voters have a higher (>6) level of determination on their choice. Table 6 shows the estimated mean and variance of NDP voter's general determination level calculated by equations 2 and 3 in the methodology section.  
+
+```{r, echo=FALSE}
+#bar chart: how determined the NDP voters are by gender
+plot.likely_NDP.determined.gen<-my_data %>% filter(party == "NDP") %>% ggplot(aes(x=likely, fill = gender))+
+  geom_bar()+
+  labs(title = "Fig. 6.a: by genders",
+       x = "Determined Levels",
+       y = "Numbers of Individuals",
+       caption = "Source: Stimulated my_data")
+
+
+#bar chart: how determined the NDP voters are by age
+plot.likely_NDP.determined.age<-my_data %>% filter(party == "NDP") %>% ggplot(aes(x=likely, fill = age))+
+  geom_bar()+
+  labs(title = "Fig. 6.b: by age groups",
+       x = "Determined Levels",
+       y = "Numbers of Individuals",
+       caption = "Source: Stimulated my_data")
+
+
+#bar chart: how determined the NDP voters are by ethnicity
+plot.likely_NDP.determined.eth<-my_data %>% filter(party == "NDP") %>% ggplot(aes(x=likely, fill = ethnicity))+
+  geom_bar()+
+  labs(title = "Fig. 6.c: by ethnic groups",
+       x = "Determined Levels",
+       y = "Numbers of Individuals",
+       caption = "Source: Stimulated my_data.
+       'NIE' refers to 2016 Census category 
+       'Visible Minority (not included elsewhere)'")+
+  guides(fill=guide_legend(ncol=2))
+
+
+#bar chart: how determined the NDP voters are by highest education level
+plot.likely_NDP.determined.edu<-my_data %>% filter(party == "NDP") %>% ggplot(aes(x=likely, fill = education))+
+  geom_bar()+
+  labs(title = "Fig. 6.d: by education level",
+       x = "Determined Levels",
+       y = "Numbers of Individuals",
+       caption = "Source: Stimulated my_data.
+       ")
+
+grid.arrange(plot.likely_NDP.determined.gen, plot.likely_NDP.determined.age, top = "Figure 6: The determination levels of NDP voters by demographic groups")
+grid.arrange(plot.likely_NDP.determined.eth, plot.likely_NDP.determined.edu)
+```
+
+Meanwhile, none of the surveyed demographic information, age, highest education level, ethnicity, and gender, shows a voting pattern on the levels of their confidence to choose NDP as the final decision at the time of this by-election (Figure 6). 
+
+## Likelyhood of switching to NDP for non-NDP-leaning voters
+
+```{r, echo=FALSE, warning=FALSE}
+
+#bar chart: how likely the non-NDP voters are going to switch to NDP by original choice of party
+plot.likely_nonNDP.determined<-my_data %>% filter(party != "NDP") %>% ggplot(aes(x=likely, fill = party))+
+  geom_bar()+
+  labs(title = "Figure 7: Tendencies of switching to NDP by original parties",
+       subtitle = "(n = 814)",
+       x = "Tendency to Switch",
+       y = "Numbers of Individuals",
+       caption = "Source: Stimulated my_data")
+plot.likely_nonNDP.determined
+
+
+```
+
+From Fig. 7 we can see the tendencies of other-party-leaning voters switching to NDP are unevenly distributed: these voters either show almost no interests or high interests in NDP. Among those who are more likely (>7) to change their votes, most of them are Liberal-leaning, but it's the same for those who have almost no interest in NDP (<2). It is probably due to the fact that this riding generally favors the Liberal. However, we can see a higher portion of Conservative-leaning voters in the <2 likelihood groups. Here table 7 shows the estimated mean and variance of the said likelihood of each party's voters, calculated by equation 2, 3 in the methodology section:
+
+```{r, echo = FALSE}
+#create a non-NDP data frame
+non_ndp <- my_data %>% filter(party != "NDP")
+#create a data frame with the sample means and variance for each party
+likely_par <- non_ndp %>% group_by(party) %>% summarise(avg = mean(likely), var = var(likely)) 
+#create a data frame that calculates the estimated variances:
+likely_new <- merge(likely_par, filter(prop.party, party != "NDP"), by = "party") %>% mutate(num = n) %>% #estimated variance calculated by equation 3 in methodology,N*party proportion to estimate the total population of NDP-leaning voters
+  mutate(estvar = (1-(num/ (N * prop)))*(var/(N*prop))) %>% select(party, avg, var, estvar)
+#create a html kable
+kable(likely_new, col.names = c("Party", "Mean", "Sample Variance", "Estimated Variance"), caption = "Mean, Sample variance and estimated variance on other party voters' tendencies to switch to NDP")
+
+```
+
+From table 7 we can see that the average likelihood for other voters to switch to NDP is around 5, regardless of origin party. Although the sample variance is large, the adjusted estimated population variance is very small.
+
+## Overall observations
+
+Overall, it seems a typical NDP voter will be a white, young person, between 18-34, with no secondary education diploma. However there’s no major distinction in voting patterns among demographic groups.
+
+In terms of NDP-leaning voter's determination, most of them are relatively determined to vote for the NDP, with an average level of determination of 6 (1-10 scale, $v(\bar{y}) = 1.00$, table 6). Meanwhile, the likelihood of other party-leaning voters switching to NDP is generally neutral with most of the average likelihood around 5 (table 7). Though the sample suggests it's because of the even distribution between the two extremes, estimated population variances suggest otherwise. 
+
+# Discussion 
+
+338Canada.com categorized Toronto Centre as "LPC safe" with 56.2% of the projected popular vote on Oct 4, 2020, while 24.7% for the NDP (338Canada, 2020). Our simulated poll results, however, show a tight race with 26.48% of votes for the Liberal and 23.28% for the NDP (table 1). Since our margin of error is 3%, this means with 95% confidence, NDP and the liberal have almost the same chance of winning the popular vote. While the Liberals still hold the upper hand on the popular vote projection, the survey results are a stark contrast to the double-digit lead the Liberals enjoyed from May to early July. Allegations of nepotism and conflicts of interest surrounding the WE Charity may not have brought down the government’s vote share in the way opposition parties would have hoped, but it did take a toll on the Liberals’ numbers. In our survey, we try to use Simple Random Sampling Without Replacement (SRSWOR) method to collect at least 1061 respondents trying to figure out the rate of how many support NDP or other parties. We found in terms of ethnicity, white voters are slightly more likely to vote for the NDP, and in terms of age groups, younger voters are leaning slightly more for the NDP. However, there seems to be no major differences in voting patterns among demographic groups. 
+
+How about the reluctant NDP supporters? Here in fig 8, we can see the ethnic composition of those NDP supporters with a determination level less than 5: 
+
+```{r, echo= FALSE}
+ndp_det_low <- ndp %>% filter(likely < 5)
+plot.low.ndp <- ndp_det_low %>% ggplot(aes(x = likely, fill = ethnicity)) + geom_bar()+
+    theme(axis.text = element_text(size = 3))+
+    theme(aspect.ratio = 0.4)+
+    labs(title = "Figure 8: More low-determination NDP supporters are ethnical minority",
+         subtitle = "Ethnic group distribution of NDP voters with determination level < 5",
+         y = "Number of voters",
+         x = "Levels of determination",
+         caption = "Source: Stimulated my_data.
+         'NIE' refers to 2016 Census category 
+         'Visible Minority (not included elsewhere)'")+
+   guides(fill=guide_legend(ncol=2))
+plot.low.ndp
+```
+
+Although according to our survey, most of the NDP supporters are quite determined about their choice, among those not that determined, most of them are of ethnic minority background (though it shouldn't be interpreted as minority NDP supporter are generally less determined). This, along with the fact that white voters showed a stronger tendency of voting for NDP, may suggest that NDP needs to find a better way to appeal to the minority population in Toronto Centre. 
+
+How about those more likely to switch to the NDP? Here fig 9 shows the age group composition of those non-NDP voters who indicate their likelihood of switching to NDP greater than 6:
+
+```{r, echo= FALSE}
+non_ndp_high <- non_ndp %>% filter(likely >= 7)
+plot.nonndp <- non_ndp_high %>% ggplot(aes(x = likely, fill = age)) + geom_bar()+
+    theme(axis.text = element_text(size = 3))+
+    theme(aspect.ratio = 0.4)+
+    labs(title = "Fig. 9: Even not the top choice, more voters between 18-44 likely to switch",
+         subtitle = "Age group distribution of non-NDP voters with NDP likelihood > 6",
+         y = "Number of voters",
+         x = "Tendency of switching to NDP",
+         caption = "Source: Stimulated my_data")
+plot.nonndp
+```
+
+Figure 9 shows that even when NDP is not their top choices, more of those who are leaning to switching to the NDP are among the 18-44 age group. Younger voters are already the strongest base for NDP (fig 2). These data suggest that NDP should invest more campaign resources on younger voters, and convince those in the 18-44 age group who are on the verge of switching to NDP. 
+
+In conclusion, NDP has a much stronger chance of winning in this by-election according to the polling results. Our stimulated polling results also suggest the demographic group that the NDP should invest more resources on, including ethnical minorities and younger voters. 
+
+
+
+## Weakness and areas for future
+After our investigation, we have the following weaknesses that should be avoided and minimized on the further studies. Firstly it lacks reliability. Without face to face connection due to COVID-19 pandemic, it is actually hard for our interviewers to determine whether the respondents provide true information and opinions. Besides, people might feel offend or unhappy to answer their real thoughts by psychological effects. There inaccurate responses lead to response errors in our analysis. Secondly, it is also lack of generality. Since we conducted the survey throughout the phone, some potential respondents probably missed the phone or did not get access to the phone. Even if we sent a letter by mail for the other group of selected voters, it was also possible that they might miss the letter. Analysis bias due to non-responses problems may also exist as certain individuals might feel uncomfortable to answer some questions and refused to answer the survey. Lastly, our interviewers might be misled by some respondents and recorded the wrong opinions for their survey due to various factors (e.g. languages). All of above could lead to the non-sampling errors by providing non-response problems, response errors, and interviewer bias. In the future, we will improve our survey method by trying increase incidence rates and motivating their willingness to respond our survey by providing some benefits. Also, we would do zoom interviews and train our interviewers in terms of both response problems and interviewer bias. 
+
+Our area of future would be focused on NDP-leaning voters. It will be an interesting study if we can get to know the reasons why they support NDP so much. In other words, we can focus on this part and find the relationship between them and those groups that they do not support NDP. This could help with getting higher supporting rates and possibility of winning the election for NDP in the future. 
+
+
+
+# Appendix
+The details of our survey questionnaire are provided in this section. 
+
+## Survey
+Here is the link for our survey questionnaire: https://forms.office.com/Pages/ResponsePage.aspx?id=JsKqeAMvTUuQN7RtVsVSEPBBuir1EfRAm1OEhOL5TIJUOURDTUxQVDU5V1MyOENQNjVJU0FKVFVFSS4u.
+
+We designed our survey to have a title and brief description for introducing our purpose in the study. 
+
+![](/cloud/project/images/survey_1.png)
+
+As Question 1 is a screening question, respondents who choosing the option "no" would not get access to the rest of survey.
+
+![](/cloud/project/images/survey_2.png)
+
+Question 2 is designed to collect the voter tendency for party selections.
+
+![](/cloud/project/images/survey_3.png)
+
+For individuals choosing NDP as their determined party in Question 2, they will get a Question 3 asking how determined they are in voting for the NDP candidate.
+
+![](/cloud/project/images/survey_NDP.png)
+
+The below is Question 3 for individuals who do not choose NDP in Question 2.
+
+![](/cloud/project/images/survey_non_NDP.png)
+
+Then, we move to the section of demographic information.
+
+![](/cloud/project/images/survey_4.png)
+Question 4 is for gender.
+
+![](/cloud/project/images/survey_5.png)
+
+Question 5 is for age.
+
+![](/cloud/project/images/survey_6.png)
+
+Question 6 is for ethnicity.
+
+![](/cloud/project/images/survey_7.png)
+
+Question 7 is for highest education level.
+
+![](/cloud/project/images/survey_8.png)
+
+We want to say thanks to all respondents after they submit the survey.
+
+![](/cloud/project/images/survey_end.png)
+
+
+# References
+- Allaire, JJ and Yihui Xie and Jonathan McPherson and Javier Luraschi and Kevin Ushey and Aron Atkins and Hadley Wickham and Joe Cheng and Winston Chang and Richard Iannone (2020). rmarkdown: Dynamic Documents for R. R package version 2.4. URL, https://rmarkdown.rstudio.com.
+- Auguie, Baptiste (2017). gridExtra: Miscellaneous Functions for "Grid" Graphics. R package version 2.3.
+- Mie- Yun Lee (2002). Conducting surveys and focusing groups. Entrepreneur Asia Pacific, Marketing. URL, https://www.entrepreneur.com/article/55680.
+- Müller, Kirill and Hadley Wickham (2020). tibble: Simple Data Frames. URL, https://tibble.tidyverse.org/, https://github.com/tidyverse/tibble.
+- R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL, https://www.R-project.org/.
+- Statistics Canada (2017). Toronto Centre [Federal electoral district], Ontario and Canada [Country] (table). Census Profile. 2016 Census. Statistics Canada Catalogue no. 98-316-X2016001. URL, https://www12.statcan.gc.ca/census-recensement/2016/dp-pd/prof/index.cfm?Lang=E (accessed October 7, 2020).
+- Wickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag, New York.
+- Wickham et al. (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
+- Wu, Changbao and Mary E. Thompson (2020). Sampling Theory and Practice. Springer.
+- Xie Y (2020). knitr: A General-Purpose Package for Dynamic Report Generation in R. R package version 1.30, URL, https://yihui.org/knitr/.
+- 338Canada.com (2020). Popular vote projection - Toronto Centre. URL, https://338canada.com/35108e.htm.
+
